@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EduGrade - Aplikasi Daftar Nilai Digital</title>
+    <title>Absensi Digital - Aplikasi Daftar Nilai Digital</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -40,13 +40,10 @@
         .shadow-right { box-shadow: 4px 0 8px -4px rgba(0,0,0,0.05); }
         .shadow-left { box-shadow: -4px 0 8px -4px rgba(0,0,0,0.05); }
 
-        /* Header Sticky Top - Level 30 */
-        thead th { position: sticky; top: 0; z-index: 30; }
-
-        /* Sudut-sudut yang Sticky Vertikal DAN Horizontal (Level 40) */
-        thead th.sticky-corner-left { z-index: 40; left: 0; }
-        thead th.sticky-corner-left-2 { z-index: 40; left: 56px; }
-        thead th.sticky-corner-right { z-index: 40; right: 0; }
+        /* Penyesuaian Z-Index sudut tabel untuk scroll horizontal */
+        thead th.sticky-corner-left { z-index: 30; left: 0; }
+        thead th.sticky-corner-left-2 { z-index: 30; left: 56px; }
+        thead th.sticky-corner-right { z-index: 30; right: 0; }
         
         /* Hide number input arrows untuk tampilan bersih */
         input[type=number]::-webkit-inner-spin-button, 
@@ -59,43 +56,53 @@
         tbody tr { transition: background-color 0.15s ease; }
     </style>
 </head>
-<body class="text-slate-800 h-screen flex overflow-hidden antialiased">
+<body class="text-slate-800 min-h-screen flex antialiased bg-slate-50">
 
     <!-- Sidebar -->
-    <aside id="sidebar" class="w-64 bg-white border-r border-slate-200 flex flex-col z-50 transition-transform duration-300 -translate-x-full fixed md:relative md:translate-x-0 h-full shadow-[4px_0_24px_rgba(0,0,0,0.02)] shrink-0">
-        <!-- Logo Area -->
-        <div class="p-6 border-b border-indigo-800 flex items-center justify-between gap-3 h-20 bg-gradient-to-r from-indigo-900 to-blue-800">
-            <div class="flex items-center gap-3">
-                <div class="bg-white/20 p-2.5 rounded-xl shadow-inner backdrop-blur-sm border border-white/10">
-                    <i data-lucide="graduation-cap" class="text-white w-5 h-5"></i>
+    <aside id="sidebar" class="w-64 bg-white border-r border-slate-200 flex flex-col z-50 transition-transform duration-300 -translate-x-full md:translate-x-0 fixed md:sticky md:top-0 h-screen shadow-[4px_0_24px_rgba(0,0,0,0.02)] shrink-0">
+        
+        <!-- Kolom 1: Logo Area -->
+        <div class="bg-gradient-to-r from-indigo-900 to-blue-800 p-5 border-b border-indigo-800 shrink-0">
+            <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="bg-white/20 p-2.5 rounded-xl shadow-inner backdrop-blur-sm border border-white/10">
+                        <i data-lucide="graduation-cap" class="text-white w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-xl text-white leading-none tracking-tight">Absensi Digital</h1>
+                        <p class="text-[10px] text-indigo-200 font-medium mt-1.5 uppercase tracking-widest">Teacher Portal</p>
+                    </div>
                 </div>
-                <div>
-                    <h1 class="font-bold text-xl text-white leading-none tracking-tight">EduGrade</h1>
-                    <p class="text-[10px] text-indigo-200 font-medium mt-1.5 uppercase tracking-widest">Teacher Portal</p>
-                </div>
+                <button onclick="toggleSidebar()" class="md:hidden text-indigo-300 hover:text-white transition-colors bg-white/10 p-1.5 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
             </div>
-            <button onclick="toggleSidebar()" class="md:hidden text-indigo-300 hover:text-white transition-colors bg-white/10 p-1.5 rounded-lg">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
         </div>
 
-        <!-- Navigation / Class List -->
-        <div class="flex-1 overflow-y-auto p-4 space-y-6">
-            <div id="class-nav-container">
-                <!-- Class lists grouped by grade will be generated here by JS -->
+        <!-- Kolom 2: User Profile (Dipisah dalam kolom tersendiri) -->
+        <div class="bg-slate-50 p-4 border-b border-slate-200 shrink-0">
+            <div class="flex flex-col gap-3">
+                <!-- Data Profil Guru -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white text-sm font-bold shrink-0 shadow-md ring-2 ring-white">M</div>
+                    <div class="min-w-0">
+                        <p class="text-sm font-bold text-slate-800 truncate" title="Mahfud S. Paukunding, S.Pd., Gr., M.Pd.">Mahfud S. Paukunding</p>
+                        <p class="text-[10px] text-slate-500 truncate mt-0.5 font-medium">S.Pd., Gr., M.Pd.</p>
+                    </div>
+                </div>
+                
+                <!-- Jabatan / Mapel -->
+                <div class="bg-white rounded-lg p-2.5 border border-slate-200 flex items-center justify-center gap-2 shadow-sm">
+                    <i data-lucide="book-open" class="w-4 h-4 text-emerald-500"></i>
+                    <span class="text-xs font-semibold text-slate-700 tracking-wide">Guru Bahasa Inggris</span>
+                </div>
             </div>
         </div>
-        
-        <!-- Sidebar Footer -->
-        <div class="p-4 border-t border-slate-100 bg-slate-50/50">
-            <div class="flex items-center gap-3 px-2">
-                <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm shrink-0">
-                    M
-                </div>
-                <div class="min-w-0">
-                    <p class="text-sm font-semibold text-slate-700 truncate" title="Mahfud S. Paukunding, S.Pd., Gr., M.Pd.">Mahfud S. Paukunding</p>
-                    <p class="text-[11px] text-slate-500 truncate mt-0.5">S.Pd., Gr., M.Pd. - B. Inggris</p>
-                </div>
+
+        <!-- Kolom 3: Navigation / Class List -->
+        <div class="flex-1 overflow-y-auto p-4 space-y-6 custom-scrollbar">
+            <div id="class-nav-container">
+                <!-- Class lists grouped by grade will be generated here by JS -->
             </div>
         </div>
     </aside>
@@ -104,7 +111,7 @@
     <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 hidden transition-opacity md:hidden" onclick="toggleSidebar()"></div>
 
     <!-- Main Content -->
-    <main class="flex-1 h-full overflow-y-auto relative w-full flex flex-col min-w-0">
+    <main class="flex-1 relative w-full flex flex-col min-w-0">
         
         <!-- Header Section -->
         <header class="bg-gradient-to-r from-indigo-900 via-blue-800 to-indigo-900 sticky top-0 z-30 shadow-md shrink-0 border-b border-indigo-700">
@@ -120,19 +127,9 @@
                                 <i data-lucide="map-pin" class="w-3 h-3 text-indigo-300"></i>
                                 Dinas Pendidikan Provinsi Sulawesi Tengah
                             </div>
-                            <h1 class="text-2xl font-extrabold text-white tracking-tight mb-2">
+                            <h1 class="text-2xl font-extrabold text-white tracking-tight">
                                 SMA Negeri 1 Banggai
                             </h1>
-                            <div class="flex flex-wrap items-center gap-3 text-sm font-medium text-white">
-                                <div class="flex items-center gap-1.5 bg-white/10 px-2.5 py-1 rounded-md border border-white/20 backdrop-blur-sm">
-                                    <i data-lucide="graduation-cap" class="w-4 h-4"></i>
-                                    Mahfud S. Paukunding, S.Pd., Gr., M.Pd.
-                                </div>
-                                <div class="flex items-center gap-1.5 bg-white/10 px-2.5 py-1 rounded-md border border-white/20 backdrop-blur-sm">
-                                    <i data-lucide="book-open" class="w-4 h-4"></i>
-                                    Guru Bahasa Inggris
-                                </div>
-                            </div>
                         </div>
                     </div>
 
@@ -160,12 +157,18 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white/10 border border-white/20 backdrop-blur-sm rounded-lg p-2 gap-3 sm:gap-0 mt-1">
                     <div class="flex items-center gap-2">
                         <div class="bg-indigo-950/50 px-3 py-1.5 rounded-md border border-indigo-800 shadow-inner text-sm font-semibold text-indigo-100 flex items-center gap-2">
-                            Daftar Nilai <span id="header-class-badge" class="text-blue-300">Kelas</span>
+                            <span id="header-mode-label">Daftar Nilai</span> <span id="header-class-badge" class="text-blue-300">Kelas</span>
                         </div>
                     </div>
-                    <div class="flex bg-indigo-950/50 p-1 rounded-md border border-indigo-800 w-full sm:w-auto shadow-inner">
-                        <button onclick="setSemester('1')" id="btn-sem-1" class="flex-1 sm:flex-none px-4 py-1.5 rounded-[4px] text-xs font-bold tracking-wide uppercase transition-all shadow-sm bg-blue-500 text-white">SEM 1</button>
-                        <button onclick="setSemester('2')" id="btn-sem-2" class="flex-1 sm:flex-none px-4 py-1.5 rounded-[4px] text-xs font-bold tracking-wide uppercase transition-all text-indigo-300 hover:text-white">SEM 2</button>
+                    <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                        <div class="flex bg-indigo-950/50 p-1 rounded-md border border-indigo-800 w-full sm:w-auto shadow-inner">
+                            <button onclick="setViewMode('nilai')" id="btn-view-nilai" class="flex-1 sm:flex-none px-4 py-1.5 rounded-[4px] text-xs font-bold tracking-wide uppercase transition-all shadow-sm bg-emerald-500 text-white">NILAI</button>
+                            <button onclick="setViewMode('absensi')" id="btn-view-absensi" class="flex-1 sm:flex-none px-4 py-1.5 rounded-[4px] text-xs font-bold tracking-wide uppercase transition-all text-indigo-300 hover:text-white">ABSENSI</button>
+                        </div>
+                        <div class="flex bg-indigo-950/50 p-1 rounded-md border border-indigo-800 w-full sm:w-auto shadow-inner">
+                            <button onclick="setSemester('1')" id="btn-sem-1" class="flex-1 sm:flex-none px-4 py-1.5 rounded-[4px] text-xs font-bold tracking-wide uppercase transition-all shadow-sm bg-blue-500 text-white">SEM 1</button>
+                            <button onclick="setSemester('2')" id="btn-sem-2" class="flex-1 sm:flex-none px-4 py-1.5 rounded-[4px] text-xs font-bold tracking-wide uppercase transition-all text-indigo-300 hover:text-white">SEM 2</button>
+                        </div>
                     </div>
                 </div>
 
@@ -204,10 +207,10 @@
         </div>
 
         <!-- Table Area -->
-        <div class="px-4 sm:px-6 pb-8 flex-grow flex flex-col min-h-0">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
+        <div class="px-4 sm:px-6 pb-8 flex-grow flex flex-col">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
                 <!-- Penambahan utility sentuhan layar untuk scrolling mulus di tablet -->
-                <div class="overflow-auto relative w-full h-full custom-scrollbar touch-pan-x touch-pan-y" style="-webkit-overflow-scrolling: touch;">
+                <div class="overflow-x-auto relative w-full custom-scrollbar touch-pan-x" style="-webkit-overflow-scrolling: touch;">
                     <table class="w-full text-sm text-left border-collapse whitespace-nowrap" id="grade-table">
                         <thead class="text-xs text-slate-600 uppercase bg-slate-50" id="table-head">
                             <!-- Headers generated by JS -->
@@ -224,7 +227,7 @@
         <footer class="mt-auto bg-gradient-to-r from-indigo-900 via-blue-800 to-indigo-900 shrink-0 border-t border-indigo-700 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
             <div class="px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
                 <p class="text-xs text-indigo-200 font-medium">
-                    &copy; 2026 <span class="text-white font-semibold">EduGrade</span>. SMA Negeri 1 Banggai.
+                    &copy; 2026 <span class="text-white font-semibold">Absensi Digital</span>. SMA Negeri 1 Banggai.
                 </p>
                 <div class="text-xs text-indigo-300 flex items-center gap-1">
                     Dinas Pendidikan Provinsi Sulawesi Tengah
@@ -275,7 +278,7 @@
         </div>
     </div>
 
-    <!-- Modal Konfirmasi Hapus (Custom Confirm) -->
+    <!-- Modal Konfirmasi Hapus -->
     <div id="confirm-modal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm transform scale-95 transition-all duration-300 overflow-hidden" id="confirm-modal-content">
             <div class="p-6">
@@ -292,7 +295,7 @@
         </div>
     </div>
 
-    <!-- Modal Ubah Nama Kolom (Custom Prompt) -->
+    <!-- Modal Ubah Nama Kolom -->
     <div id="prompt-modal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm transform scale-95 transition-all duration-300 overflow-hidden" id="prompt-modal-content">
             <div class="p-6">
@@ -307,7 +310,7 @@
         </div>
     </div>
 
-    <!-- Modal Pemberitahuan (Custom Alert) -->
+    <!-- Modal Pemberitahuan -->
     <div id="alert-modal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm transform scale-95 transition-all duration-300 overflow-hidden" id="alert-modal-content">
             <div class="p-6 text-center">
@@ -324,7 +327,6 @@
     <!-- JavaScript Application Logic -->
     <script>
         // --- DATA & STATE ---
-        // Permintaan: modifikasi kelasnya menjadi kelas X B, C, D, E, XI A, B dan XII A
         const CLASSES_DATA = [
             { grade: 'X', list: ['X B', 'X C', 'X D', 'X E'] },
             { grade: 'XI', list: ['XI A', 'XI B'] },
@@ -335,14 +337,16 @@
         const ALL_CLASSES = CLASSES_DATA.flatMap(g => g.list);
         
         const INITIAL_COLUMNS = {
+            absensi: [{ id: 'absensi_1', label: '1' }],
             tugas: [{ id: 'tugas_1', label: '1' }],
             vocab: [{ id: 'vocab_1', label: '1' }],
             percakapan: [{ id: 'cakap_1', label: '1' }],
             uh: [{ id: 'uh_1', label: '1' }]
         };
 
-        // Konfigurasi Warna yang lebih bersih dan profesional
+        // Konfigurasi Warna
         const CATEGORY_STYLES = {
+            absensi: { header: 'bg-cyan-50 border-cyan-100 text-cyan-800', icon: 'text-cyan-500', focus: 'focus:border-cyan-500 focus:ring-cyan-500/20' },
             tugas: { header: 'bg-indigo-50 border-indigo-100 text-indigo-800', icon: 'text-indigo-500', focus: 'focus:border-indigo-500 focus:ring-indigo-500/20' },
             vocab: { header: 'bg-emerald-50 border-emerald-100 text-emerald-800', icon: 'text-emerald-500', focus: 'focus:border-emerald-500 focus:ring-emerald-500/20' },
             percakapan: { header: 'bg-amber-50 border-amber-100 text-amber-800', icon: 'text-amber-500', focus: 'focus:border-amber-500 focus:ring-amber-500/20' },
@@ -355,6 +359,7 @@
             classColumns: JSON.parse(localStorage.getItem('edugrade_columns')) || {},
             selectedClass: localStorage.getItem('edugrade_class') || ALL_CLASSES[0],
             selectedSemester: localStorage.getItem('edugrade_semester') || '1',
+            viewMode: localStorage.getItem('edugrade_view') || 'nilai',
             searchQuery: "",
             editingId: null,
             editNameValue: ""
@@ -367,17 +372,23 @@
                     '1': JSON.parse(JSON.stringify(INITIAL_COLUMNS)),
                     '2': JSON.parse(JSON.stringify(INITIAL_COLUMNS))
                 };
-            } else if (!state.classColumns[c]['1']) {
-                // Migrate old data structure to semester based
-                const oldCols = state.classColumns[c];
-                state.classColumns[c] = {
-                    '1': oldCols,
-                    '2': JSON.parse(JSON.stringify(INITIAL_COLUMNS))
-                };
+            } else {
+                if (!state.classColumns[c]['1']) {
+                    const oldCols = state.classColumns[c];
+                    state.classColumns[c] = {
+                        '1': oldCols,
+                        '2': JSON.parse(JSON.stringify(INITIAL_COLUMNS))
+                    };
+                }
+                ['1', '2'].forEach(sem => {
+                    if (!state.classColumns[c][sem].absensi) {
+                        state.classColumns[c][sem].absensi = [{ id: `absensi_${Date.now()}`, label: '1' }];
+                    }
+                });
             }
         });
 
-        // Migrate student scores if they are in the old format
+        // Migrate student scores
         state.students.forEach(student => {
             if (!student.scores || typeof student.scores['1'] === 'undefined') {
                 const oldScores = student.scores || {};
@@ -398,11 +409,17 @@
             saveData();
         }
 
+        function setViewMode(mode) {
+            state.viewMode = mode;
+            saveData();
+        }
+
         function saveData() {
             localStorage.setItem('edugrade_students', JSON.stringify(state.students));
             localStorage.setItem('edugrade_columns', JSON.stringify(state.classColumns));
             localStorage.setItem('edugrade_class', state.selectedClass);
             localStorage.setItem('edugrade_semester', state.selectedSemester);
+            localStorage.setItem('edugrade_view', state.viewMode);
             renderApp();
         }
 
@@ -427,7 +444,7 @@
             categorySums.push(uasScore);
 
             const finalSum = categorySums.reduce((a, b) => a + b, 0);
-            return Math.round(finalSum / 5); // Average of 4 categories + UAS
+            return Math.round(finalSum / 5); 
         }
 
         function getGradeStyle(avg) {
@@ -445,11 +462,9 @@
             container.innerHTML = '';
             
             CLASSES_DATA.forEach(group => {
-                // Group Header
                 const groupDiv = document.createElement('div');
                 groupDiv.className = 'mb-5';
                 
-                // Menentukan warna berbeda untuk setiap tingkatan kelas
                 let badgeColor = '';
                 if (group.grade === 'X') badgeColor = 'from-emerald-500 to-teal-500 shadow-emerald-200';
                 else if (group.grade === 'XI') badgeColor = 'from-blue-500 to-indigo-500 shadow-blue-200';
@@ -502,17 +517,27 @@
             document.getElementById('header-class-badge').textContent = state.selectedClass; 
             document.getElementById('modal-class-display').textContent = state.selectedClass;
             document.getElementById('active-class-label').textContent = state.selectedClass;
+            document.getElementById('header-mode-label').textContent = state.viewMode === 'nilai' ? 'Daftar Nilai' : 'Daftar Absensi';
             
             const btnSem1 = document.getElementById('btn-sem-1');
             const btnSem2 = document.getElementById('btn-sem-2');
+            const btnViewNilai = document.getElementById('btn-view-nilai');
+            const btnViewAbsensi = document.getElementById('btn-view-absensi');
             
-            // Penyesuaian warna tombol semester untuk menyesuaikan dengan tema header yang gelap
             if (state.selectedSemester === '1') {
                 btnSem1.className = "flex-1 sm:flex-none px-4 py-1.5 rounded-[4px] text-xs font-bold tracking-wide uppercase transition-all shadow-sm bg-blue-500 text-white";
                 btnSem2.className = "flex-1 sm:flex-none px-4 py-1.5 rounded-[4px] text-xs font-bold tracking-wide uppercase transition-all text-indigo-300 hover:text-white";
             } else {
                 btnSem2.className = "flex-1 sm:flex-none px-4 py-1.5 rounded-[4px] text-xs font-bold tracking-wide uppercase transition-all shadow-sm bg-blue-500 text-white";
                 btnSem1.className = "flex-1 sm:flex-none px-4 py-1.5 rounded-[4px] text-xs font-bold tracking-wide uppercase transition-all text-indigo-300 hover:text-white";
+            }
+
+            if (state.viewMode === 'nilai') {
+                btnViewNilai.className = "flex-1 sm:flex-none px-4 py-1.5 rounded-[4px] text-xs font-bold tracking-wide uppercase transition-all shadow-sm bg-emerald-500 text-white";
+                btnViewAbsensi.className = "flex-1 sm:flex-none px-4 py-1.5 rounded-[4px] text-xs font-bold tracking-wide uppercase transition-all text-indigo-300 hover:text-white";
+            } else {
+                btnViewAbsensi.className = "flex-1 sm:flex-none px-4 py-1.5 rounded-[4px] text-xs font-bold tracking-wide uppercase transition-all shadow-sm bg-emerald-500 text-white";
+                btnViewNilai.className = "flex-1 sm:flex-none px-4 py-1.5 rounded-[4px] text-xs font-bold tracking-wide uppercase transition-all text-indigo-300 hover:text-white";
             }
         }
 
@@ -521,7 +546,7 @@
             const tbody = document.getElementById('table-body');
             
             const cols = getCurrentColumns();
-            const { tugas, vocab, percakapan, uh } = cols;
+            const { absensi, tugas, vocab, percakapan, uh } = cols;
             
             // --- HEADER RENDER ---
             let headerRow1 = `
@@ -543,24 +568,35 @@
                 </th>
             `};
 
-            headerRow1 += renderCatHeader('TUGAS', 'tugas', tugas);
-            headerRow1 += renderCatHeader('VOCAB', 'vocab', vocab);
-            headerRow1 += renderCatHeader('PERCAKAPAN', 'percakapan', percakapan);
-            headerRow1 += renderCatHeader('UH', 'uh', uh);
-
-            // UAS & Akhir
-            headerRow1 += `
-                    <th rowspan="2" class="px-2 py-3 font-semibold text-center w-20 border-b border-l border-slate-200 bg-slate-100 text-slate-700">
-                        <div class="text-[11px] font-bold tracking-wider">UAS</div>
-                    </th>
-                    <th rowspan="2" class="px-4 py-3 font-semibold text-center w-24 border-b border-slate-200 bg-slate-800 text-white">
-                        <div class="text-[11px] font-bold tracking-wider">NILAI<br>AKHIR</div>
-                    </th>
-                    <th rowspan="2" class="px-3 py-3 font-semibold text-center w-16 border-b border-slate-200 sticky-col-right sticky-corner-right bg-white shadow-left z-50">
-                        <i data-lucide="settings" class="w-4 h-4 mx-auto text-slate-400"></i>
-                    </th>
-                </tr>
-            `;
+            if (state.viewMode === 'absensi') {
+                headerRow1 += renderCatHeader('ABSENSI', 'absensi', absensi);
+                headerRow1 += `
+                        <th colspan="8" class="px-2 py-2 text-center border-b border-l border-r border-slate-200 bg-slate-100 text-slate-700">
+                            <div class="text-[11px] font-bold tracking-wider">REKAP ABSEN</div>
+                        </th>
+                        <th rowspan="2" class="px-3 py-3 font-semibold text-center w-16 border-b border-slate-200 sticky-col-right sticky-corner-right bg-white shadow-left z-50">
+                            <i data-lucide="settings" class="w-4 h-4 mx-auto text-slate-400"></i>
+                        </th>
+                    </tr>
+                `;
+            } else {
+                headerRow1 += renderCatHeader('TUGAS', 'tugas', tugas);
+                headerRow1 += renderCatHeader('VOCAB', 'vocab', vocab);
+                headerRow1 += renderCatHeader('PERCAKAPAN', 'percakapan', percakapan);
+                headerRow1 += renderCatHeader('UH', 'uh', uh);
+                headerRow1 += `
+                        <th rowspan="2" class="px-2 py-3 font-semibold text-center w-20 border-b border-l border-slate-200 bg-slate-100 text-slate-700">
+                            <div class="text-[11px] font-bold tracking-wider">UAS</div>
+                        </th>
+                        <th rowspan="2" class="px-4 py-3 font-semibold text-center w-24 border-b border-slate-200 bg-slate-800 text-white">
+                            <div class="text-[11px] font-bold tracking-wider">NILAI<br>AKHIR</div>
+                        </th>
+                        <th rowspan="2" class="px-3 py-3 font-semibold text-center w-16 border-b border-slate-200 sticky-col-right sticky-corner-right bg-white shadow-left z-50">
+                            <i data-lucide="settings" class="w-4 h-4 mx-auto text-slate-400"></i>
+                        </th>
+                    </tr>
+                `;
+            }
 
             let headerRow2 = `<tr>`;
             const renderSubHeader = (key, columnsData) => {
@@ -581,10 +617,21 @@
                 `).join('');
             };
 
-            headerRow2 += renderSubHeader('tugas', tugas);
-            headerRow2 += renderSubHeader('vocab', vocab);
-            headerRow2 += renderSubHeader('percakapan', percakapan);
-            headerRow2 += renderSubHeader('uh', uh);
+            if (state.viewMode === 'absensi') {
+                headerRow2 += renderSubHeader('absensi', absensi);
+                const rekapAbsenHeaders = ['H', 'S', 'I', 'A', 'B', 'T', 'JML', '%'].map(h => `
+                    <th class="px-1 py-1.5 font-bold text-center w-8 border-b border-r border-slate-200 bg-white min-w-[32px] text-[11px] text-slate-600">
+                        ${h}
+                    </th>
+                `).join('');
+                headerRow2 += rekapAbsenHeaders;
+            } else {
+                headerRow2 += renderSubHeader('tugas', tugas);
+                headerRow2 += renderSubHeader('vocab', vocab);
+                headerRow2 += renderSubHeader('percakapan', percakapan);
+                headerRow2 += renderSubHeader('uh', uh);
+            }
+            
             headerRow2 += `</tr>`;
 
             thead.innerHTML = headerRow1 + headerRow2;
@@ -594,7 +641,7 @@
             
             let filteredStudents = state.students
                 .filter(s => s.class === state.selectedClass)
-                .sort((a, b) => a.name.localeCompare(b.name)); // Sort alphabetical
+                .sort((a, b) => a.name.localeCompare(b.name));
 
             if (state.searchQuery) {
                 filteredStudents = filteredStudents.filter(s => s.name.toLowerCase().includes(state.searchQuery));
@@ -629,27 +676,46 @@
             } else {
                 filteredStudents.forEach((student, index) => {
                     const scores = student.scores[state.selectedSemester] || {};
-                    const avg = calculateAverage(scores);
-                    const gradeStyle = getGradeStyle(avg);
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-slate-50 border-b border-slate-100 group";
 
-                    // Helper to render input cells
                     const createInputCells = (key, columnsData) => {
                         const style = CATEGORY_STYLES[key];
                         return columnsData.map(col => {
                             const val = scores[col.id] || '';
-                            return `
-                            <td class="px-1 py-2.5 text-center border-r border-slate-100">
-                                <input type="number" min="0" max="100" placeholder="-"
-                                    value="${val}" 
-                                    onchange="updateScore(${student.id}, '${col.id}', this.value)"
-                                    class="w-14 text-center py-2 rounded-md border border-slate-200 bg-slate-50 hover:bg-white hover:border-slate-300 ${style.focus} text-slate-800 text-sm focus:outline-none focus:ring-2 focus:bg-white transition-all shadow-sm">
-                            </td>
-                        `}).join('');
+                            if (key === 'absensi') {
+                                const options = ['', 'H', 'S', 'I', 'A', 'B', 'T'];
+                                const selectOptions = options.map(opt => `<option value="${opt}" ${val === opt ? 'selected' : ''}>${opt || '-'}</option>`).join('');
+                                
+                                let colorClass = 'text-slate-800';
+                                if(val === 'H') colorClass = 'text-emerald-600 font-bold';
+                                else if(val === 'S') colorClass = 'text-blue-600 font-bold';
+                                else if(val === 'I') colorClass = 'text-amber-600 font-bold';
+                                else if(val === 'A') colorClass = 'text-rose-600 font-bold';
+                                else if(val === 'B') colorClass = 'text-purple-600 font-bold';
+                                else if(val === 'T') colorClass = 'text-orange-600 font-bold';
+
+                                return `
+                                <td class="px-1 py-2.5 text-center border-r border-slate-100">
+                                    <select onchange="updateScore(${student.id}, '${col.id}', this.value)"
+                                        class="w-14 text-center py-2 rounded-md border border-slate-200 bg-slate-50 hover:bg-white hover:border-slate-300 ${style.focus} ${colorClass} text-sm focus:outline-none focus:ring-2 focus:bg-white transition-all shadow-sm appearance-none cursor-pointer">
+                                        ${selectOptions}
+                                    </select>
+                                </td>
+                                `;
+                            } else {
+                                return `
+                                <td class="px-1 py-2.5 text-center border-r border-slate-100">
+                                    <input type="number" min="0" max="100" placeholder="-"
+                                        value="${val}" 
+                                        onchange="updateScore(${student.id}, '${col.id}', this.value)"
+                                        class="w-14 text-center py-2 rounded-md border border-slate-200 bg-slate-50 hover:bg-white hover:border-slate-300 ${style.focus} text-slate-800 text-sm focus:outline-none focus:ring-2 focus:bg-white transition-all shadow-sm">
+                                </td>
+                                `;
+                            }
+                        }).join('');
                     };
 
-                    // Name Cell Logic
                     let nameCellContent = '';
                     if (state.editingId === student.id) {
                         nameCellContent = `
@@ -673,39 +739,106 @@
                         `;
                     }
 
-                    tr.innerHTML = `
+                    let rowHTML = `
                         <td class="px-2 py-3 text-center text-sm font-medium text-slate-500 border-r border-slate-100 sticky-col-left bg-white group-hover:bg-slate-50 shadow-right">${index + 1}</td>
                         <td class="px-4 py-3 border-r border-slate-100 sticky-col-left-2 bg-white group-hover:bg-slate-50 shadow-right">
                             ${nameCellContent}
                         </td>
-                        
-                        ${createInputCells('tugas', tugas)}
-                        ${createInputCells('vocab', vocab)}
-                        ${createInputCells('percakapan', percakapan)}
-                        ${createInputCells('uh', uh)}
-                        
-                        <!-- UAS Input -->
-                        <td class="px-1 py-2.5 text-center border-l border-r border-slate-100 bg-slate-50/50">
-                             <input type="number" min="0" max="100" placeholder="-"
-                                value="${scores.uas || ''}" 
-                                onchange="updateScore(${student.id}, 'uas', this.value)"
-                                class="w-14 text-center py-2 rounded-md border border-slate-200 bg-white focus:border-slate-500 focus:ring-2 focus:ring-slate-200 text-slate-800 font-bold text-sm focus:outline-none transition-all shadow-sm">
-                        </td>
-                        
-                        <!-- Final Score -->
-                        <td class="px-4 py-3 text-center font-bold text-slate-800">
-                            <span class="inline-flex items-center justify-center w-12 h-9 rounded-md text-sm ${gradeStyle}">${avg}</span>
-                        </td>
-                        
-                        <!-- Actions -->
+                    `;
+
+                    if (state.viewMode === 'absensi') {
+                        let countH = 0, countS = 0, countI = 0, countA = 0, countB = 0, countT = 0, totalFilled = 0;
+                        absensi.forEach(c => {
+                            const v = scores[c.id];
+                            if(v) {
+                                totalFilled++;
+                                if(v === 'H') countH++;
+                                else if(v === 'S') countS++;
+                                else if(v === 'I') countI++;
+                                else if(v === 'A') countA++;
+                                else if(v === 'B') countB++;
+                                else if(v === 'T') countT++;
+                            }
+                        });
+                        const presentCount = countH + countT;
+                        const percentH = totalFilled > 0 ? Math.round((presentCount / totalFilled) * 100) : 0;
+
+                        rowHTML += `
+                            ${createInputCells('absensi', absensi)}
+                            
+                            <td class="px-1 py-2.5 text-center border-l border-slate-100 bg-emerald-50/50 text-xs font-semibold text-emerald-700">${countH}</td>
+                            <td class="px-1 py-2.5 text-center border-slate-100 bg-blue-50/50 text-xs font-semibold text-blue-700">${countS}</td>
+                            <td class="px-1 py-2.5 text-center border-slate-100 bg-amber-50/50 text-xs font-semibold text-amber-700">${countI}</td>
+                            <td class="px-1 py-2.5 text-center border-slate-100 bg-rose-50/50 text-xs font-semibold text-rose-700">${countA}</td>
+                            <td class="px-1 py-2.5 text-center border-slate-100 bg-purple-50/50 text-xs font-semibold text-purple-700">${countB}</td>
+                            <td class="px-1 py-2.5 text-center border-r border-slate-100 bg-orange-50/50 text-xs font-semibold text-orange-700">${countT}</td>
+                            <td class="px-1 py-2.5 text-center border-r border-slate-100 bg-indigo-50/50 text-xs font-bold text-indigo-700">${presentCount}</td>
+                            <td class="px-2 py-2.5 text-center border-r border-slate-100 bg-slate-50 text-xs font-bold text-slate-700">${percentH}%</td>
+                        `;
+                    } else {
+                        const avg = calculateAverage(scores);
+                        const gradeStyle = getGradeStyle(avg);
+
+                        rowHTML += `
+                            ${createInputCells('tugas', tugas)}
+                            ${createInputCells('vocab', vocab)}
+                            ${createInputCells('percakapan', percakapan)}
+                            ${createInputCells('uh', uh)}
+                            
+                            <td class="px-1 py-2.5 text-center border-l border-r border-slate-100 bg-slate-50/50">
+                                 <input type="number" min="0" max="100" placeholder="-"
+                                    value="${scores.uas || ''}" 
+                                    onchange="updateScore(${student.id}, 'uas', this.value)"
+                                    class="w-14 text-center py-2 rounded-md border border-slate-200 bg-white focus:border-slate-500 focus:ring-2 focus:ring-slate-200 text-slate-800 font-bold text-sm focus:outline-none transition-all shadow-sm">
+                            </td>
+                            
+                            <td class="px-4 py-3 text-center font-bold text-slate-800">
+                                <span class="inline-flex items-center justify-center w-12 h-9 rounded-md text-sm ${gradeStyle}">${avg}</span>
+                            </td>
+                        `;
+                    }
+
+                    rowHTML += `
                         <td class="px-2 py-3 text-center sticky-col-right bg-white group-hover:bg-slate-50 shadow-left border-l border-slate-100">
                              <button onclick="deleteStudent(${student.id})" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors" title="Hapus Siswa">
                                 <i data-lucide="trash-2" class="w-5 h-5"></i>
                             </button>
                         </td>
                     `;
+                    
+                    tr.innerHTML = rowHTML;
                     tbody.appendChild(tr);
                 });
+
+                if (state.viewMode === 'absensi') {
+                    let summaryRow = `<tr class="bg-slate-100/80 text-[10px] font-bold text-slate-600 border-t-2 border-slate-200">
+                        <td colspan="2" class="px-4 py-3 text-right border-r border-slate-200 sticky-col-left-2 shadow-right bg-slate-100 uppercase tracking-wide">Rekap Harian:</td>`;
+                    
+                    absensi.forEach(col => {
+                        let h=0, s=0, i=0, a=0, b=0, t=0;
+                        filteredStudents.forEach(student => {
+                            const val = (student.scores[state.selectedSemester] || {})[col.id];
+                            if(val === 'H') h++;
+                            else if(val === 'S') s++;
+                            else if(val === 'I') i++;
+                            else if(val === 'A') a++;
+                            else if(val === 'B') b++;
+                            else if(val === 'T') t++;
+                        });
+                        
+                        summaryRow += `<td class="px-0.5 py-1.5 text-center border-r border-slate-200 leading-tight bg-cyan-50/30">
+                            <div class="flex flex-col items-center text-[9px] gap-0.5">
+                                <span class="text-emerald-600 font-bold" title="Hadir">H:${h}</span>
+                                <span class="text-blue-600 font-bold" title="Sakit">S:${s}</span>
+                                <span class="text-amber-600 font-bold" title="Izin">I:${i}</span>
+                                <span class="text-rose-600 font-bold" title="Alpa">A:${a}</span>
+                            </div>
+                        </td>`;
+                    });
+
+                    summaryRow += `<td colspan="9" class="border-l border-slate-200 bg-slate-50"></td></tr>`;
+                    tbody.insertAdjacentHTML('beforeend', summaryRow);
+                }
             }
             lucide.createIcons();
         }
@@ -720,16 +853,21 @@
         function updateScore(studentId, colId, value) {
             const student = state.students.find(s => s.id === studentId);
             if (student) {
-                // Ensure value is between 0-100
-                let numVal = parseFloat(value);
-                if(isNaN(numVal)) numVal = '';
-                else if (numVal > 100) numVal = 100;
-                else if (numVal < 0) numVal = 0;
+                let finalVal = value;
+                if (['H', 'S', 'I', 'A', 'B', 'T'].includes(value) || value === '') {
+                    finalVal = value; 
+                } else {
+                    let numVal = parseFloat(value);
+                    if(isNaN(numVal)) finalVal = '';
+                    else if (numVal > 100) finalVal = 100;
+                    else if (numVal < 0) finalVal = 0;
+                    else finalVal = numVal;
+                }
                 
                 if (!student.scores[state.selectedSemester]) {
                     student.scores[state.selectedSemester] = {};
                 }
-                student.scores[state.selectedSemester][colId] = numVal;
+                student.scores[state.selectedSemester][colId] = finalVal;
                 saveData();
             }
         }
@@ -738,7 +876,6 @@
             state.editingId = id;
             state.editNameValue = currentName;
             renderTable();
-            // Focus input shortly after render
             setTimeout(() => {
                 const input = document.getElementById(`edit-name-${id}`);
                 if(input) { input.focus(); input.select(); }
@@ -770,7 +907,6 @@
             document.getElementById('modal-class-display').textContent = state.selectedClass;
             
             modal.classList.remove('hidden');
-            // Trigger reflow
             void modal.offsetWidth; 
             modal.classList.remove('opacity-0');
             content.classList.remove('scale-95');
@@ -789,7 +925,6 @@
             }, 300);
         }
 
-        // --- SISTEM MODAL CUSTOM (PENGGANTI CONFIRM, ALERT, PROMPT) ---
         let confirmAction = null;
         
         function showConfirmModal(message, action) {
@@ -799,7 +934,7 @@
             const content = document.getElementById('confirm-modal-content');
             
             modal.classList.remove('hidden');
-            void modal.offsetWidth; // Trigger reflow
+            void modal.offsetWidth;
             modal.classList.remove('opacity-0');
             content.classList.remove('scale-95');
             
@@ -807,7 +942,7 @@
                 if (confirmAction) confirmAction();
                 closeConfirmModal();
             };
-            lucide.createIcons(); // refresh ikon jika perlu
+            lucide.createIcons(); 
         }
 
         function closeConfirmModal() {
@@ -904,7 +1039,16 @@
             const cols = state.classColumns[state.selectedClass][state.selectedSemester][category];
             const newIndex = cols.length + 1;
             const newId = `${category}_${Date.now()}`;
-            cols.push({ id: newId, label: newIndex.toString() });
+            
+            let defaultLabel = newIndex.toString();
+            if (category === 'absensi') {
+                const today = new Date();
+                const dd = String(today.getDate()).padStart(2, '0');
+                const mm = String(today.getMonth() + 1).padStart(2, '0');
+                defaultLabel = `${dd}/${mm}`;
+            }
+            
+            cols.push({ id: newId, label: defaultLabel });
             saveData();
         }
 
@@ -913,7 +1057,6 @@
                 state.classColumns[state.selectedClass][state.selectedSemester][category] = 
                     state.classColumns[state.selectedClass][state.selectedSemester][category].filter(c => c.id !== colId);
                 
-                // Cleanup deleted column data from students
                 state.students.filter(s => s.class === state.selectedClass).forEach(student => {
                     if (student.scores[state.selectedSemester]) {
                         delete student.scores[state.selectedSemester][colId];
@@ -927,7 +1070,7 @@
             const col = state.classColumns[state.selectedClass][state.selectedSemester][category].find(c => c.id === colId);
             showPromptModal(col.label, (newName) => {
                 if (newName && newName.trim() !== '') {
-                    col.label = newName.substring(0, 10); // Batas karakter nama kolom
+                    col.label = newName.substring(0, 10);
                     saveData();
                 }
             });
@@ -946,10 +1089,13 @@
                 return;
             }
 
+            const isAbsensi = state.viewMode === 'absensi';
+            const titleText = isAbsensi ? "DAFTAR ABSENSI SISWA" : "DAFTAR NILAI SISWA";
+
             // Document Header
             doc.setFont("helvetica", "bold");
             doc.setFontSize(14);
-            doc.text("DAFTAR NILAI SISWA", 14, 15);
+            doc.text(titleText, 14, 15);
             doc.setFontSize(10);
             doc.setFont("helvetica", "normal");
             doc.text(`DINAS PENDIDIKAN PROVINSI SULAWESI TENGAH`, 14, 22);
@@ -970,29 +1116,54 @@
                 });
             };
 
-            addCats('Tugas', columns.tugas);
-            addCats('Vocab', columns.vocab);
-            addCats('Percakapan', columns.percakapan);
-            addCats('UH', columns.uh);
-            
-            head1.push('UAS', 'N. Akhir');
-            head2.push('', '');
+            if (isAbsensi) {
+                addCats('Absensi', columns.absensi);
+                head1.push('Rekap Absen', '', '', '', '', '', '', '');
+                head2.push('H', 'S', 'I', 'A', 'B', 'T', 'JML', '%');
+            } else {
+                addCats('Tugas', columns.tugas);
+                addCats('Vocab', columns.vocab);
+                addCats('Percakapan', columns.percakapan);
+                addCats('UH', columns.uh);
+                head1.push('UAS', 'N. Akhir');
+                head2.push('', '');
+            }
 
             // Build Rows
             const body = students.map((s, idx) => {
                 const row = [idx + 1, s.name];
                 const scores = s.scores[state.selectedSemester] || {};
-                const addScores = (data) => {
-                    data.forEach(c => row.push(scores[c.id] || ''));
-                };
                 
-                addScores(columns.tugas);
-                addScores(columns.vocab);
-                addScores(columns.percakapan);
-                addScores(columns.uh);
-                
-                row.push(scores.uas || '');
-                row.push(calculateAverage(scores));
+                if (isAbsensi) {
+                    let countH = 0, countS = 0, countI = 0, countA = 0, countB = 0, countT = 0, totalFilled = 0;
+                    columns.absensi.forEach(c => {
+                        const v = scores[c.id];
+                        row.push(v || '');
+                        if (v) {
+                            totalFilled++;
+                            if(v === 'H') countH++;
+                            else if(v === 'S') countS++;
+                            else if(v === 'I') countI++;
+                            else if(v === 'A') countA++;
+                            else if(v === 'B') countB++;
+                            else if(v === 'T') countT++;
+                        }
+                    });
+                    const presentCount = countH + countT;
+                    const percentH = totalFilled > 0 ? Math.round((presentCount / totalFilled) * 100) : 0;
+                    row.push(countH, countS, countI, countA, countB, countT, presentCount, `${percentH}%`);
+                } else {
+                    const addScores = (data) => {
+                        data.forEach(c => row.push(scores[c.id] || ''));
+                    };
+                    addScores(columns.tugas);
+                    addScores(columns.vocab);
+                    addScores(columns.percakapan);
+                    addScores(columns.uh);
+                    
+                    row.push(scores.uas || '');
+                    row.push(calculateAverage(scores));
+                }
                 return row;
             });
 
@@ -1006,20 +1177,20 @@
                 headStyles: { fillColor: [79, 70, 229], textColor: 255, halign: 'center' },
                 columnStyles: {
                     0: { halign: 'center', cellWidth: 10 }, // No
-                    1: { cellWidth: 50 }, // Nama
+                    1: { cellWidth: 40 }, // Nama
                 },
                 didDrawPage: function (data) {
-                    // Footer
                     doc.setFontSize(8);
                     doc.text(
-                        'Dicetak dari EduGrade - ' + new Date().toLocaleDateString('id-ID'),
+                        'Dicetak dari Absensi Digital - ' + new Date().toLocaleDateString('id-ID'),
                         data.settings.margin.left,
                         doc.internal.pageSize.height - 10
                     );
                 }
             });
 
-            doc.save(`Nilai_${state.selectedClass.replace(' ', '_')}.pdf`);
+            const fileName = isAbsensi ? `Absensi_${state.selectedClass.replace(' ', '_')}.pdf` : `Nilai_${state.selectedClass.replace(' ', '_')}.pdf`;
+            doc.save(fileName);
         }
 
         // --- INIT ---
@@ -1029,7 +1200,6 @@
             renderTable();
         }
 
-        // Start app
         document.addEventListener('DOMContentLoaded', () => {
             renderApp();
         });
