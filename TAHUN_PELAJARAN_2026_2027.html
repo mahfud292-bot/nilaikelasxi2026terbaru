@@ -1105,40 +1105,50 @@
             // Prepare Table Data
             const columns = getCurrentColumns();
             
-            // Build Headers
-            let head1 = ['No', 'Nama Siswa'];
-            let head2 = ['', ''];
+            // Build Headers properly for autoTable using colSpan and rowSpan
+            let head1 = [
+                { content: 'No', rowSpan: 2, styles: { halign: 'center', valign: 'middle', cellWidth: 10 } },
+                { content: 'Nama Siswa', rowSpan: 2, styles: { halign: 'center', valign: 'middle', cellWidth: 45 } }
+            ];
+            let head2 = [];
             
             const addCats = (label, data) => {
-                data.forEach((c, i) => {
-                    head1.push(i === 0 ? label : '');
-                    head2.push(c.label);
-                });
+                if (data.length > 0) {
+                    head1.push({ content: label, colSpan: data.length, styles: { halign: 'center' } });
+                    data.forEach(c => {
+                        head2.push({ content: c.label, styles: { halign: 'center' } });
+                    });
+                }
             };
 
             if (isAbsensi) {
                 addCats('Absensi', columns.absensi);
-                head1.push('Rekap Absen', '', '', '', '', '', '', '');
-                head2.push('H', 'S', 'I', 'A', 'B', 'T', 'JML', '%');
+                head1.push({ content: 'Rekap Absen', colSpan: 8, styles: { halign: 'center', fillColor: [241, 245, 249], textColor: [15, 23, 42] } });
+                ['H', 'S', 'I', 'A', 'B', 'T', 'JML', '%'].forEach(h => {
+                    head2.push({ content: h, styles: { halign: 'center', fillColor: [241, 245, 249], textColor: [15, 23, 42] } });
+                });
             } else {
                 addCats('Tugas', columns.tugas);
                 addCats('Vocab', columns.vocab);
                 addCats('Percakapan', columns.percakapan);
                 addCats('UH', columns.uh);
-                head1.push('UAS', 'N. Akhir');
-                head2.push('', '');
+                head1.push({ content: 'UAS', rowSpan: 2, styles: { halign: 'center', valign: 'middle', fillColor: [241, 245, 249], textColor: [15, 23, 42] } });
+                head1.push({ content: 'N. Akhir', rowSpan: 2, styles: { halign: 'center', valign: 'middle', fillColor: [30, 41, 59], textColor: 255 } });
             }
 
             // Build Rows
             const body = students.map((s, idx) => {
-                const row = [idx + 1, s.name];
+                const row = [
+                    { content: idx + 1, styles: { halign: 'center' } },
+                    s.name
+                ];
                 const scores = s.scores[state.selectedSemester] || {};
                 
                 if (isAbsensi) {
                     let countH = 0, countS = 0, countI = 0, countA = 0, countB = 0, countT = 0, totalFilled = 0;
                     columns.absensi.forEach(c => {
                         const v = scores[c.id];
-                        row.push(v || '');
+                        row.push({ content: v || '', styles: { halign: 'center' } });
                         if (v) {
                             totalFilled++;
                             if(v === 'H') countH++;
@@ -1151,21 +1161,36 @@
                     });
                     const presentCount = countH + countT;
                     const percentH = totalFilled > 0 ? Math.round((presentCount / totalFilled) * 100) : 0;
-                    row.push(countH, countS, countI, countA, countB, countT, presentCount, `${percentH}%`);
+                    
+                    // Rekap Columns
+                    row.push({ content: countH, styles: { halign: 'center', textColor: [5, 150, 105], fillColor: [236, 253, 245] } });
+                    row.push({ content: countS, styles: { halign: 'center', textColor: [37, 99, 235], fillColor: [239, 246, 255] } });
+                    row.push({ content: countI, styles: { halign: 'center', textColor: [217, 119, 6], fillColor: [255, 251, 235] } });
+                    row.push({ content: countA, styles: { halign: 'center', textColor: [225, 29, 72], fillColor: [255, 241, 242] } });
+                    row.push({ content: countB, styles: { halign: 'center', textColor: [147, 51, 234], fillColor: [250, 245, 255] } });
+                    row.push({ content: countT, styles: { halign: 'center', textColor: [234, 88, 12], fillColor: [255, 237, 213] } });
+                    row.push({ content: presentCount, styles: { halign: 'center', fontStyle: 'bold', textColor: [67, 56, 202], fillColor: [238, 242, 255] } });
+                    row.push({ content: `${percentH}%`, styles: { halign: 'center', fontStyle: 'bold', fillColor: [248, 250, 252] } });
                 } else {
                     const addScores = (data) => {
-                        data.forEach(c => row.push(scores[c.id] || ''));
+                        data.forEach(c => row.push({ content: scores[c.id] || '', styles: { halign: 'center' } }));
                     };
                     addScores(columns.tugas);
                     addScores(columns.vocab);
                     addScores(columns.percakapan);
                     addScores(columns.uh);
                     
-                    row.push(scores.uas || '');
-                    row.push(calculateAverage(scores));
+                    row.push({ content: scores.uas || '', styles: { halign: 'center', fontStyle: 'bold', fillColor: [248, 250, 252] } });
+                    
+                    const avg = calculateAverage(scores);
+                    row.push({ content: avg, styles: { halign: 'center', fontStyle: 'bold', fillColor: [241, 245, 249] } });
                 }
                 return row;
             });
+
+            // Calculate font sizes and paddings dynamically based on number of columns
+            const baseFontSize = isAbsensi ? (columns.absensi.length > 20 ? 6 : 7) : 8;
+            const baseCellPadding = isAbsensi ? (columns.absensi.length > 20 ? 1 : 1.5) : 2;
 
             // Generate Table
             doc.autoTable({
@@ -1173,11 +1198,17 @@
                 head: [head1, head2],
                 body: body,
                 theme: 'grid',
-                styles: { fontSize: 8, cellPadding: 2 },
-                headStyles: { fillColor: [79, 70, 229], textColor: 255, halign: 'center' },
-                columnStyles: {
-                    0: { halign: 'center', cellWidth: 10 }, // No
-                    1: { cellWidth: 40 }, // Nama
+                styles: { 
+                    fontSize: baseFontSize, 
+                    cellPadding: baseCellPadding,
+                    lineWidth: 0.1,
+                    lineColor: [226, 232, 240] // Warna border seperti slate-200
+                },
+                headStyles: { 
+                    fillColor: [79, 70, 229], // Warna latar Indigo
+                    textColor: 255, 
+                    halign: 'center',
+                    valign: 'middle'
                 },
                 didDrawPage: function (data) {
                     doc.setFontSize(8);
